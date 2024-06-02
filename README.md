@@ -1,0 +1,1 @@
+This project is a gui that can find music files and edit their metadata.
