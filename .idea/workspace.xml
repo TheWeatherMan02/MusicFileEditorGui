@@ -4,16 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d2c54fe6-04fc-44ac-a4a6-30cfd24a73a5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/modules/scripts_for_gui/show_img_cover.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/modules/widgets/button_widget.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/modules/widgets/dropdown_menu_widget.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/modules/widgets/line_edit_widget.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="d2c54fe6-04fc-44ac-a4a6-30cfd24a73a5" name="Changes" comment="Added generic widgets for user interaction">
+      <change afterPath="$PROJECT_DIR$/modules/auxiliary_functions/layout_functions.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/modules/dictionaries/dictionaries.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/modules/dictionaries/file_types.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/modules/interface/session_events.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/editor_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/editor_main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/editor_QWidget.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/editor_QWidget.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/scripts_for_gui/show_img_cover.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/auxiliary_functions/audio_functions.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,10 +58,20 @@
     "Python.gptA.executor": "Run",
     "Python.gptC.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SONARLINT_PRECOMMIT_ANALYSIS": "true",
     "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/spencer/PycharmProjects/MusicFileEditorGui/modules/test_files",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/modules/test_files" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/modules/scripts" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="editor_main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="MusicFileEditorGui" />
@@ -109,6 +117,19 @@
       <option name="presentableId" value="Default" />
       <updated>1717299416931</updated>
     </task>
+    <task id="LOCAL-00001" summary="Added generic widgets for user interaction">
+      <option name="closed" value="true" />
+      <created>1717319122097</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1717319122097</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Added generic widgets for user interaction" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added generic widgets for user interaction" />
   </component>
 </project>
