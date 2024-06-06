@@ -2,7 +2,9 @@ from PyQt6.QtWidgets import QLineEdit
 
 
 class LineEditWidget(QLineEdit):
-    def __init__(self, external_event):
+    def __init__(self, parent):
         super().__init__()
-        self.external_event = external_event
-        self.textChanged.connect(self.external_event)
+        self.textChanged.connect(lambda text: self.text_changed(parent, text))
+
+    def text_changed(self, parent, text):
+        parent.comm.emit_signal(text, action="le_or_dm_change")

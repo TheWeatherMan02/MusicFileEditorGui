@@ -8,19 +8,23 @@ Abbreviations:
     - dm: Dropdown Menu
     - lb: Label
     - le: Line Edit
+    - cb: Checkbox
 """
 import copy
 
 from modules.widgets.button_widget import ButtonWidget
 from modules.widgets.line_edit_widget import LineEditWidget
 from modules.widgets.dropdown_menu_widget import DropdownMenu
+from modules.widgets.checkbox_widget import CheckboxWidget
+from modules.widgets.communicator_class import Communicator
 import modules.auxiliary_functions.layout_functions as layout
 from modules.interface import session_events as se
-from modules.dictionaries.dictionaries import Directory_Template
+from modules.dictionaries.dictionaries import Defaults
+from modules.dictionaries.file_types import Audio_File_Extensions as extensions
 
 import os
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtWidgets import QMainWindow, QWidget, QGridLayout, QVBoxLayout, QLabel, QGroupBox
+from PyQt6.QtWidgets import QMainWindow, QWidget, QGridLayout, QVBoxLayout, QHBoxLayout, QLabel, QGroupBox
 
 
 class EditorGui(QMainWindow):
@@ -28,6 +32,10 @@ class EditorGui(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("Music File Editor")
+
+        # initializing communicator and connecting it to the preform_action method
+        self.comm = Communicator()
+        self.comm.my_signal.connect(self.preform_action)
 
         container = QWidget()
         self.layout = QVBoxLayout(container)
@@ -40,13 +48,15 @@ class EditorGui(QMainWindow):
 
     def _initialize_session_handles(self):
         # initialize directories
-        image_directory = Directory_Template
-        image_directory['directory_type'] = "image"
-        self.image_directory = copy.deepcopy(image_directory)
-        # self.image_directory = copy.deepcopy(Directory_Template)
-        # self.image_directory['directory_type'] = "image"
-        self.song_directory = copy.deepcopy(Directory_Template)
+        self.image_directory = copy.deepcopy(Defaults['directory_template'])
+        self.image_directory['directory_type'] = "image"
+        self.song_directory = copy.deepcopy(Defaults['directory_template'])
         self.song_directory['directory_type'] = "song"
+
+        self.song_metadata = copy.deepcopy(Defaults['song_metadata'])
+
+        self.return_value = None  # initializing return variables used during runtime
+        self.return_key = None
 
     def _build_all(self):
         """
@@ -81,35 +91,36 @@ class EditorGui(QMainWindow):
         v_layout_metadata_song.addWidget(self._build_metadata_edit())
         main_layout.addLayout(v_layout_metadata_song, 1, 1)
 
-        # widgets for adding resources to current image directory
-        v_layout_add_resources_image = QVBoxLayout()
-        v_layout_add_resources_image.addWidget(self._build_add_image())
-        main_layout.addLayout(v_layout_add_resources_image, 2, 0)
+        # widgets for exporting file to other file type
+        v_layout_export_file = QVBoxLayout()
+        v_layout_export_file.addLayout(self._build_export_song())
+        main_layout.addLayout(v_layout_export_file, 0, 2)
 
-        # widgets for adding resources to current song directory
-        v_layout_add_resources_song = QVBoxLayout()
-        v_layout_add_resources_song.addWidget(self._build_add_song())
-        main_layout.addLayout(v_layout_add_resources_song, 2, 1)
+        # widgets for adding resources to current directories
+        v_layout_add_resources = QVBoxLayout()
+        v_layout_add_resources.addWidget(self._build_add_image())
+        v_layout_add_resources.addWidget(self._build_add_song())
+        main_layout.addLayout(v_layout_add_resources, 1, 2)
 
         # building gui
         self.layout.addLayout(main_layout)
 
     def _build_image_directory_select(self):
-        label = QLabel("select path to image directory:")
-        bn_select_directory = ButtonWidget("Directory: {0}".format(self.image_directory['directory_name']),
-                                           lambda: self.preform_action("select_image_directory"), self)
+        self.image_direc_lb = QLabel("Image Directory: ")
+        bn_select_directory = ButtonWidget(self, "Change Directory", "select_directory", "image")
 
-        h_layout_image_directory = layout.horizontal_layout([label, bn_select_directory])
+        v_layout_image_directory = QVBoxLayout()
+        v_layout_image_directory.addWidget(self.image_direc_lb)
+        v_layout_image_directory.addWidget(bn_select_directory)
 
         file_name = "episode_1.jpeg"
         file_direc = "/Users/spencer/PycharmProjects/MusicFileEditorGui/modules/test_files"
         self.image_path = os.path.join(file_direc, file_name)
 
-        return h_layout_image_directory
+        return v_layout_image_directory
 
     def _build_get_current_cover_image(self):
-        bn_get_current_cover_image = ButtonWidget("get current cover image",
-                                                  self.ext_event, self)
+        bn_get_current_cover_image = ButtonWidget(self, "get current cover image", "show_cover_image")
 
         return bn_get_current_cover_image
 
@@ -129,80 +140,83 @@ class EditorGui(QMainWindow):
         return image
 
     def _build_image_select(self):
-        label = QLabel("select image from directory:")
-        dm_image_select = DropdownMenu(["1", "2", "3"], self.ext_event)
+        label = QLabel("Select image from directory:")
+        self.dm_image_select = DropdownMenu([key for key in (self.image_directory['files'].keys())], self)
 
-        h_layout_image_select = layout.horizontal_layout([label, dm_image_select])
+        h_layout_image_select = layout.horizontal_layout([label, self.dm_image_select])
 
         return h_layout_image_select
 
     def _build_add_image(self):
         group_box_add_image_to_directory = QGroupBox("Add image to selected directory")
-        v_layout_group_box_add_image_to_directory = QVBoxLayout()
+        v_layout_group_box_add_image_to_directory = QGridLayout()
 
-        bn_add_image_url = ButtonWidget('add image from url:', self.ext_event, self)
-        le_add_image_url = LineEditWidget(self.ext_event)
-        h_layout_add_image_url = layout.horizontal_layout([bn_add_image_url,
-                                                           le_add_image_url])
-        v_layout_group_box_add_image_to_directory.addLayout(h_layout_add_image_url)
+        bn_add_image_url = ButtonWidget(self, 'Add image from url:', "add_from_url", "image")
+        le_add_image_url = LineEditWidget(self)
+        v_layout_add_image_url = QVBoxLayout()
+        v_layout_add_image_url.addWidget(bn_add_image_url)
+        v_layout_add_image_url.addWidget(le_add_image_url)
 
-        bn_add_image_path = ButtonWidget('add image from path:', self.ext_event, self)
-        le_add_image_path = LineEditWidget(self.ext_event)
-        h_layout_add_image_path = layout.horizontal_layout([bn_add_image_path,
-                                                            le_add_image_path])
-        v_layout_group_box_add_image_to_directory.addLayout(h_layout_add_image_path)
+        bn_add_image_path = ButtonWidget(self, 'Add image from url:', "add_from_path", "image")
+        le_add_image_path = LineEditWidget(self)
+        v_layout_add_image_path = QVBoxLayout()
+        v_layout_add_image_path.addWidget(bn_add_image_path)
+        v_layout_add_image_path.addWidget(le_add_image_path)
+
+        v_layout_group_box_add_image_to_directory.addLayout(v_layout_add_image_url, 0, 0)
+        v_layout_group_box_add_image_to_directory.addLayout(v_layout_add_image_path, 1, 0)
 
         group_box_add_image_to_directory.setLayout(v_layout_group_box_add_image_to_directory)
 
         return group_box_add_image_to_directory
 
     def _build_song_directory_select(self):
-        label = QLabel("select path to song directory:")
-        bn_select_directory = ButtonWidget("Directory: {0}".format(self.song_directory['directory_name']),
-                                           lambda: self.preform_action("select_song_directory"), self)
+        self.song_direc_lb = QLabel("Song Directory: ")
+        bn_select_directory = ButtonWidget(self, "Change Directory", "select_directory", "song")
 
-        h_layout_song_directory = layout.horizontal_layout([label, bn_select_directory])
+        v_layout_song_directory = QVBoxLayout()
+        v_layout_song_directory.addWidget(self.song_direc_lb)
+        v_layout_song_directory.addWidget(bn_select_directory)
 
         file_name = "system0.m4a"
         file_direc = "/Users/spencer/PycharmProjects/MusicFileEditorGui/modules/test_files"
         self.song_path = os.path.join(file_direc, file_name)
 
-        return h_layout_song_directory
+        return v_layout_song_directory
 
     def _build_song_select(self):
-        label = QLabel("select song from directory:")
-        dm_song_select = DropdownMenu(["1", "2", "3"], self.ext_event)
+        label = QLabel("Select song from directory:")
+        self.dm_song_select = DropdownMenu([key for key in (self.image_directory['files'].keys())], self)
 
-        h_layout_song_select = layout.horizontal_layout([label, dm_song_select])
+        h_layout_song_select = layout.horizontal_layout([label, self.dm_song_select])
 
         return h_layout_song_select
 
     def _build_save_settings(self):
-        bn_save_settings = ButtonWidget("save current changes to music file", self.ext_event, self)
-
+        bn_save_settings = ButtonWidget(self, "save current changes to music file", "save_settings")
         return bn_save_settings
 
     def _build_metadata_display(self):
         group_box_current_metadata = QGroupBox("Current Metadata")
         v_layout_group_box_current_metadata = QVBoxLayout()
 
-        lb_current_title = QLabel("current title: ")
-        v_layout_group_box_current_metadata.addWidget(lb_current_title)
+        self.lb_current_title = QLabel("current title: ")
+        v_layout_group_box_current_metadata.addWidget(self.lb_current_title)
 
-        lb_current_artist = QLabel("current artist: ")
-        v_layout_group_box_current_metadata.addWidget(lb_current_artist)
+        self.lb_current_artist = QLabel("current artist: ")
+        v_layout_group_box_current_metadata.addWidget(self.lb_current_artist)
 
-        lb_current_album = QLabel("current album: ")
-        v_layout_group_box_current_metadata.addWidget(lb_current_album)
+        self.lb_current_album = QLabel("current album: ")
+        v_layout_group_box_current_metadata.addWidget(self.lb_current_album)
 
-        lb_current_genre = QLabel("current genre: ")
-        v_layout_group_box_current_metadata.addWidget(lb_current_genre)
+        self.lb_current_genre = QLabel("current genre: ")
+        v_layout_group_box_current_metadata.addWidget(self.lb_current_genre)
 
-        lb_current_track_num = QLabel("current track number: ")
-        v_layout_group_box_current_metadata.addWidget(lb_current_track_num)
+        self.lb_current_track_num = QLabel("current track number: ")
+        v_layout_group_box_current_metadata.addWidget(self.lb_current_track_num)
 
-        lb_current_release_date = QLabel("current release date: ")
-        v_layout_group_box_current_metadata.addWidget(lb_current_release_date)
+        self.lb_current_release_date = QLabel("current release date: ")
+        v_layout_group_box_current_metadata.addWidget(self.lb_current_release_date)
 
         group_box_current_metadata.setLayout(v_layout_group_box_current_metadata)
 
@@ -210,99 +224,147 @@ class EditorGui(QMainWindow):
 
     def _build_metadata_edit(self):
         group_box_edit_metadata = QGroupBox("Edit Metadata")
-        v_layout_group_box_edit_metadata = QVBoxLayout()
+        h_layout_group_box_edit_metadata = QHBoxLayout()
 
-        lb_edit_title = QLabel("edit title:")
-        le_edit_title = LineEditWidget(self.ext_event)
-        h_layout_edit_title = layout.horizontal_layout([lb_edit_title, le_edit_title])
-        v_layout_group_box_edit_metadata.addLayout(h_layout_edit_title)
+        # labels
+        v_layout_group_box_edit_metadata_lb = QVBoxLayout()
+        v_layout_group_box_edit_metadata_lb.addWidget(QLabel("edit title:"))
+        v_layout_group_box_edit_metadata_lb.addWidget(QLabel("edit artist:"))
+        v_layout_group_box_edit_metadata_lb.addWidget(QLabel("edit album:"))
+        v_layout_group_box_edit_metadata_lb.addWidget(QLabel("edit genre:"))
+        v_layout_group_box_edit_metadata_lb.addWidget(QLabel("edit track number:"))
+        v_layout_group_box_edit_metadata_lb.addWidget(QLabel("edit release date:"))
 
-        lb_edit_artist = QLabel("edit artist:")
-        le_edit_artist = LineEditWidget(self.ext_event)
-        h_layout_edit_artist = layout.horizontal_layout([lb_edit_artist, le_edit_artist])
-        v_layout_group_box_edit_metadata.addLayout(h_layout_edit_artist)
+        # line edits
+        v_layout_group_box_edit_metadata_le = QVBoxLayout()
+        v_layout_group_box_edit_metadata_le.addWidget(LineEditWidget(self))
+        v_layout_group_box_edit_metadata_le.addWidget(LineEditWidget(self))
+        v_layout_group_box_edit_metadata_le.addWidget(LineEditWidget(self))
+        v_layout_group_box_edit_metadata_le.addWidget(LineEditWidget(self))
+        v_layout_group_box_edit_metadata_le.addWidget(LineEditWidget(self))
+        v_layout_group_box_edit_metadata_le.addWidget(LineEditWidget(self))
 
-        lb_edit_album = QLabel("edit album:")
-        le_edit_album = LineEditWidget(self.ext_event)
-        h_layout_edit_album = layout.horizontal_layout([lb_edit_album, le_edit_album])
-        v_layout_group_box_edit_metadata.addLayout(h_layout_edit_album)
-
-        lb_edit_genre = QLabel("edit genre:")
-        le_edit_genre = LineEditWidget(self.ext_event)
-        h_layout_edit_genre = layout.horizontal_layout([lb_edit_genre, le_edit_genre])
-        v_layout_group_box_edit_metadata.addLayout(h_layout_edit_genre)
-
-        lb_edit_track_num = QLabel("edit track number:")
-        le_edit_track_num = LineEditWidget(self.ext_event)
-        h_layout_edit_track_num = layout.horizontal_layout([lb_edit_track_num, le_edit_track_num])
-        v_layout_group_box_edit_metadata.addLayout(h_layout_edit_track_num)
-
-        lb_edit_release_date = QLabel("edit release date:")
-        le_edit_release_date = LineEditWidget(self.ext_event)
-        h_layout_edit_release_date = layout.horizontal_layout([lb_edit_release_date, le_edit_release_date])
-        v_layout_group_box_edit_metadata.addLayout(h_layout_edit_release_date)
-
-        group_box_edit_metadata.setLayout(v_layout_group_box_edit_metadata)
+        h_layout_group_box_edit_metadata.addLayout(v_layout_group_box_edit_metadata_lb)
+        h_layout_group_box_edit_metadata.addLayout(v_layout_group_box_edit_metadata_le)
+        group_box_edit_metadata.setLayout(h_layout_group_box_edit_metadata)
 
         return group_box_edit_metadata
 
     def _build_add_song(self):
         group_box_add_song_to_directory = QGroupBox("Add song to selected directory")
-        v_layout_group_box_add_song_to_directory = QVBoxLayout()
+        v_layout_group_box_add_song_to_directory = QGridLayout()
 
-        bn_add_song_url = ButtonWidget('add song from url:', self.ext_event, self)
-        le_add_song_url = LineEditWidget(self.ext_event)
-        h_layout_add_song_url = layout.horizontal_layout([bn_add_song_url,
-                                                          le_add_song_url])
-        v_layout_group_box_add_song_to_directory.addLayout(h_layout_add_song_url)
+        bn_add_song_url = ButtonWidget(self, 'Add song from url:', "add_from_url", "song")
+        le_add_song_url = LineEditWidget(self)
+        v_layout_add_song_url = QVBoxLayout()
+        v_layout_add_song_url.addWidget(bn_add_song_url)
+        v_layout_add_song_url.addWidget(le_add_song_url)
 
-        bn_add_song_path = ButtonWidget('add song from path:', self.ext_event, self)
-        le_add_song_path = LineEditWidget(self.ext_event)
-        h_layout_add_song_path = layout.horizontal_layout([bn_add_song_path,
-                                                           le_add_song_path])
-        v_layout_group_box_add_song_to_directory.addLayout(h_layout_add_song_path)
+        bn_add_song_path = ButtonWidget(self, 'Add song from path:', "add_from_path", "song")
+        le_add_song_path = LineEditWidget(self)
+        v_layout_add_song_path = QVBoxLayout()
+        v_layout_add_song_path.addWidget(bn_add_song_path)
+        v_layout_add_song_path.addWidget(le_add_song_path)
+
+        v_layout_group_box_add_song_to_directory.addLayout(v_layout_add_song_url, 0, 0)
+        v_layout_group_box_add_song_to_directory.addLayout(v_layout_add_song_path, 1, 0)
 
         group_box_add_song_to_directory.setLayout(v_layout_group_box_add_song_to_directory)
 
         return group_box_add_song_to_directory
 
-    def preform_action(self, action):
+    def _build_export_song(self):
+        self.lb_file_type = QLabel("Current file type: ")
+        lb_export_file_to = QLabel("Export to:")
+        self.dm_export_file_to = DropdownMenu(extensions, self)  # self.preform_action(action="le_or_dm_change"), self)
+        self.cb_export_file = CheckboxWidget("Export song to selected file type", self)
+
+        h_layout_export_file_to = layout.horizontal_layout([lb_export_file_to, self.dm_export_file_to])
+
+        v_layout_export_song = QVBoxLayout()
+        v_layout_export_song.addWidget(self.cb_export_file)
+        v_layout_export_song.addWidget(self.lb_file_type)
+        v_layout_export_song.addLayout(h_layout_export_file_to)
+
+        return v_layout_export_song
+
+    def preform_action(self, data):
         """
         This method gets the name of an action and then runs it.
+        The order of the arguments must be past in a specific order
 
         :return:
         """
+        args, kwargs = data
+        kwargs_keylist = [key for key in kwargs.keys()]
+
+        self.return_value = args[0] if len(args) > 0 else None
+        self.return_key = args[1] if len(args) > 1 else None
+        action = kwargs[kwargs_keylist[0]]  # if a signal is emitted, must always pass an action keyword argument as a string
+        directory_type = kwargs[kwargs_keylist[1]] if len(kwargs) > 1 else None
+
         method_name = action + "_action"
         do_action = getattr(self, method_name)
-        do_action()
 
-    def select_song_directory_action(self):
-        song_directory_path, made_selection = se.select_directory()
+        if directory_type is None:
+            do_action()
+        else:
+            do_action(directory_type)
+
+    def select_directory_action(self, directory_type):
+        directory_path, made_selection = se.select_directory()
 
         if made_selection:
-            updated_files = se.get_files_from_directory(self.image_directory['directory_type'], song_directory_path)
+            updated_files = se.get_files_from_directory(directory_type, directory_path)
 
             # updating directory
-            self.image_directory['directory_name'] = song_directory_path
-            self.image_directory['files'] = updated_files
+            self.update_directory(directory_type, updated_files, directory_path)
+
+            # updating label
+            label_name = directory_type + "_direc_lb"
+            self.update_label(label_name, directory_path)
+
+            # updating dropdown menu
+            dropdown_name = "dm_" + directory_type + "_select"
+            self.update_dropdown(dropdown_name, [keys for keys in updated_files.keys()])
             print("directory successfully updated")
 
         else:
             print("no changes made to song directory")
 
-    def select_image_directory_action(self):
-        image_directory_path, made_selection = se.select_directory()
+    def le_or_dm_change_action(self):
+        se.le_or_dm_change(self)
 
-        if made_selection:
-            updated_files = se.get_files_from_directory(self.image_directory['directory_type'], image_directory_path)
+    def cb_change_action(self):
+        self.ext_event()
 
-            # updating directory
-            self.image_directory['directory_name'] = image_directory_path
-            self.image_directory['files'] = updated_files
-            print("directory successfully updated")
+    def save_settings_action(self):
+        self.ext_event()
 
-        else:
-            print("no changes made to image directory")
+    def show_cover_image_action(self):
+        self.ext_event()
+
+    def add_from_url_action(self, directory_type):
+        self.ext_event()
+
+    def add_from_path_action(self, directory_type):
+        self.ext_event()
+
+    def update_label(self, label_name, updated_text):
+        label = getattr(self, label_name)
+        # only grabs the "<label header>:" text and not the other text
+        label_header = label.text().split(":")[0] + ": "
+        label.setText(label_header + str(updated_text))
+
+    def update_dropdown(self, dropdown_name, updated_items):
+        dropdown = getattr(self, dropdown_name)
+        dropdown.clear()
+        dropdown.addItems(updated_items)
+
+    def update_directory(self, directory_type, files, path):
+        directory = getattr(self, directory_type + "_directory")
+        directory['directory_name'] = path
+        directory['files'] = files
 
     def ext_event(self):
         print("you made an event!")

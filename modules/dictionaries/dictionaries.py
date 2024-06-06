@@ -14,3 +14,16 @@ Directory_Template = {'directory_name': No_Selection,
                       'directory_type': No_Selection,
                       'files': {}  # format: {file name, file path}
                       }
+
+Add_to_Directory = {'image_path': "",
+                    'image_url': "",
+                    'song_path': "",
+                    'song_url': ""
+                    }
+
+# ####---------------------------------------------------------
+
+Defaults = {'song_metadata': Song_Metadata,
+            'directory_template': Directory_Template,
+            'add_to_directory': Add_to_Directory
+            }

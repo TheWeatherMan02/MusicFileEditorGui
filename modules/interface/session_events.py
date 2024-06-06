@@ -13,7 +13,7 @@ def select_directory():
     # create and open directory selection dialog
     dialog = QFileDialog()
     dialog.setFileMode(QFileDialog.FileMode.Directory)
-    dialog.setOption(QFileDialog.Option.ShowDirsOnly, True)
+    dialog.setOption(QFileDialog.Option.ShowDirsOnly, on=True)
 
     if dialog.exec():
         try:
@@ -22,7 +22,7 @@ def select_directory():
             print("Selected directory:", directory_path)
             made_selection = True
         except Exception as e:
-            print("! (error) Failure during selection process")
+            print("!!! (error) Failure during selection process")
             print(f"Error type: {e}")
             made_selection = False
 
@@ -45,7 +45,7 @@ def get_files_from_directory(directory_type, new_info_path):
         from modules.dictionaries.file_types import Audio_File_Extensions
         file_extension_list = Audio_File_Extensions
     else:
-        print("! (error) unknown directory type: {0}".format(directory_type))
+        print("!!! (error) unknown directory type: {0}".format(directory_type))
         file_extension_list = []
 
     # change path to new directory
@@ -58,3 +58,8 @@ def get_files_from_directory(directory_type, new_info_path):
                 updated_files.update({filename: file_path})
 
     return updated_files
+
+
+def le_or_dm_change(parent):
+    print(type(parent))
+    
