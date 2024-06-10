@@ -1,29 +1,28 @@
-No_Selection = "None Selected"
+import os
 
-Song_Metadata = {'title': No_Selection,
-                 'artist': No_Selection,
-                 'album': No_Selection,
-                 'genre': No_Selection,
-                 'track_number': No_Selection,
-                 'release_date': No_Selection,
-                 'cover_art': No_Selection,
-                 'file_type': No_Selection
+Default_Image_Path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "test_files", "episode_1.jpeg")
+
+Song_Metadata = {'title': "",
+                 'artist': "",
+                 'album': "",
+                 'year': "",
+                 'genre': "",
+                 'track_number': "",
+                 'cover_art': ""
                  }
 
-Directory_Template = {'directory_name': No_Selection,
-                      'directory_type': No_Selection,
-                      'files': {}  # format: {file name, file path}
+Directory_Template = {'directory_name': "",
+                      'directory_type': "",
+                      'files': {},  # format: {file name, file path}
+                      'current_file': "",
+                      'export_type': "",  # only used in the song directory
+                      'add_path': "",
+                      'add_url': ""
                       }
-
-Add_to_Directory = {'image_path': "",
-                    'image_url': "",
-                    'song_path': "",
-                    'song_url': ""
-                    }
 
 # ####---------------------------------------------------------
 
 Defaults = {'song_metadata': Song_Metadata,
             'directory_template': Directory_Template,
-            'add_to_directory': Add_to_Directory
+            'default_image': Default_Image_Path
             }

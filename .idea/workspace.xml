@@ -4,11 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d2c54fe6-04fc-44ac-a4a6-30cfd24a73a5" name="Changes" comment="Finished main gui layout and started adding functionality">
-      <change afterPath="$PROJECT_DIR$/modules/widgets/checkbox_widget.py" afterDir="false" />
+    <list default="true" id="d2c54fe6-04fc-44ac-a4a6-30cfd24a73a5" name="Changes" comment="Added communicator and export&#10;&#10;Added export group to change file type of song.&#10;&#10;Added communicator class to call the preform action method to customize outputs.">
+      <change afterPath="$PROJECT_DIR$/modules/auxiliary_functions/metadata_classes.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/modules/dictionaries/metadata_keys.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/modules/widgets/image_widget.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/auxiliary_functions/audio_functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/auxiliary_functions/audio_functions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/dictionaries/dictionaries.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/dictionaries/dictionaries.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/dictionaries/file_types.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/dictionaries/file_types.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/editor_QWidget.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/editor_QWidget.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/interface/session_events.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/interface/session_events.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/widgets/button_widget.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/widgets/button_widget.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/widgets/dropdown_menu_widget.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/widgets/dropdown_menu_widget.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/widgets/line_edit_widget.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/widgets/line_edit_widget.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,21 +56,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.button_widget.executor&quot;: &quot;Run&quot;,
-    &quot;Python.editor_QWidget.executor&quot;: &quot;Run&quot;,
-    &quot;Python.editor_main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.from_chatGPT.executor&quot;: &quot;Run&quot;,
-    &quot;Python.gptA.executor&quot;: &quot;Run&quot;,
-    &quot;Python.gptC.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SONARLINT_PRECOMMIT_ANALYSIS&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/spencer/PycharmProjects/MusicFileEditorGui/modules/test_files&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.audio_functions.executor": "Run",
+    "Python.button_widget.executor": "Run",
+    "Python.dictionaries.executor": "Run",
+    "Python.editor_QWidget.executor": "Run",
+    "Python.editor_main.executor": "Run",
+    "Python.from_chatGPT.executor": "Run",
+    "Python.gptA.executor": "Run",
+    "Python.gptC.executor": "Run",
+    "Python.metadata_classes.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SONARLINT_PRECOMMIT_ANALYSIS": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/spencer/PycharmProjects/MusicFileEditorGui/.venv/bin",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/modules/test_files" />
@@ -130,12 +143,21 @@
       <option name="project" value="LOCAL" />
       <updated>1717402245119</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Added communicator and export&#10;&#10;Added export group to change file type of song.&#10;&#10;Added communicator class to call the preform action method to customize outputs.">
+      <option name="closed" value="true" />
+      <created>1717663806717</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1717663806717</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added generic widgets for user interaction" />
     <MESSAGE value="Finished main gui layout and started adding functionality" />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished main gui layout and started adding functionality" />
+    <MESSAGE value="Added communicator and export&#10;&#10;Added export group to change file type of song.&#10;&#10;Added communicator class to call the preform action method to customize outputs." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added communicator and export&#10;&#10;Added export group to change file type of song.&#10;&#10;Added communicator class to call the preform action method to customize outputs." />
   </component>
 </project>
