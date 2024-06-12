@@ -48,7 +48,7 @@ def get_files_from_directory(directory_type, new_info_path):
         from modules.dictionaries.file_types import Audio_File_Extensions
         file_extension_list = Audio_File_Extensions
     else:
-        print("!!! (error) unknown directory type: {0}".format(directory_type))
+        print("!!! (error) unknown file type: {0}".format(directory_type))
         file_extension_list = []
 
     # change path to new directory
@@ -87,6 +87,25 @@ def update_song_metadata(editor):
     else:
         print("!!! (update_song_metadata) File path does not exist, no changes to metadata made")
         print(f"File path: {file_path}")
+
+
+def update_song_metadata_labels(editor):
+    for key in editor.song_metadata_dictionary:
+        if key == 'cover_art':
+            metadata_image = editor.song_metadata_dictionary[key]
+            # update song cover image
+            update_image(editor, "current_image", metadata_image)
+
+        else:
+            label_name = "lb_current_" + key
+            updated_text = editor.song_metadata_dictionary[key]
+            update_label(editor, label_name, updated_text)
+
+            # update line edit metadata with current metadata if metadata checkbox is checked
+            if editor.cb_edit_metadata_fill_le.checkState() is Qt.CheckState.Checked:
+                line_edit_name = "le_metadata_" + key
+                updated_text = editor.song_metadata_dictionary[key]
+                update_line_edit_text(editor, line_edit_name, updated_text)
 
 
 def update_label(editor, label_name, updated_text):
@@ -137,8 +156,7 @@ def update_image(editor, widget_name, new_image):
             print("Current song likely does not have contain a cover image")
             print("Setting current song cover to default image")
 
-            from modules.dictionaries.dictionaries import Default_Image_Path
-            new_pixmap = QPixmap(Default_Image_Path)
+            new_pixmap = QPixmap(editor.default_image['image_path'])
 
         scaled_new_pixmap = new_pixmap.scaled(image_widget.image_label.size(),
                                               Qt.AspectRatioMode.KeepAspectRatio,
@@ -161,7 +179,7 @@ def save_settings(editor):
 
     # checking to see if image selected is the default. If it isn't will update the cover art to the selected image
     default_check = editor.dm_image_directory_select.currentText()
-    if default_check != "-- Default --":  # TODO: make this a dictionary value (look for other places this is used)
+    if default_check != editor.default_image['image_label']:
         # update cover art to selected image
         image_directory = editor.image_directory_select['directory_name']
         image_name = editor.image_directory_dictionary['current_file']

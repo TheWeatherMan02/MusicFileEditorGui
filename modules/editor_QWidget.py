@@ -25,14 +25,13 @@ from modules.dictionaries.file_types import Audio_File_Extensions as extensions
 
 import os
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QMainWindow, QWidget, QGridLayout, QVBoxLayout, QHBoxLayout, QLabel, QGroupBox
 
 
 class EditorGui(QMainWindow):
     def __init__(self):
         super().__init__()
-
+        # TODO: make a feedback window
         self.setWindowTitle("Music File Editor")
 
         # initializing communicator and connecting it to the preform_action method
@@ -48,22 +47,27 @@ class EditorGui(QMainWindow):
         container.setLayout(self.layout)
         self.setCentralWidget(container)
 
-        print(f"image directory current file: {self.image_directory_dictionary['current_file']}")
+        # print(f"image directory current file: {self.image_directory_dictionary['current_file']}")
 
     def _initialize_session_handles(self):
         # initialize directories
         self.image_directory_dictionary = copy.deepcopy(Defaults['directory_template'])
         self.image_directory_dictionary['directory_type'] = "image"
+
         self.song_directory_dictionary = copy.deepcopy(Defaults['directory_template'])
         self.song_directory_dictionary['directory_type'] = "song"
 
         self.song_metadata_dictionary = copy.deepcopy(Defaults['song_metadata'])
+
+        self.default_image = copy.deepcopy(Defaults['default_image'])
 
     def _build_all(self):
         """
         This function sets the layout and builds the gui.
 
         The gui is divided into a grid layout.
+
+        TODO: change the layout of the gui to look better
         """
         main_layout = QGridLayout()
 
@@ -71,7 +75,6 @@ class EditorGui(QMainWindow):
         v_layout_select_directory_image = QVBoxLayout()
         v_layout_select_directory_image.addLayout(self._build_image_directory_select())
         v_layout_select_directory_image.addLayout(self._build_image_select())
-        # v_layout_select_directory_image.addWidget(self._build_get_current_cover_image())
         v_layout_select_directory_image.addWidget(self._build_add_image())
         main_layout.addLayout(v_layout_select_directory_image, 0, 0)
 
@@ -92,7 +95,7 @@ class EditorGui(QMainWindow):
         v_layout_current_image.addWidget(self._build_current_image())
         main_layout.addLayout(v_layout_current_image, 1, 1)
 
-        # widgets for save and exporting file to other file type
+        # widgets for save and exporting file to other file type TODO: make a change filename feature
         v_layout_export_file = QVBoxLayout()
         v_layout_export_file.addLayout(self._build_export_song())
         v_layout_export_file.addWidget(self._build_save_settings())
@@ -123,12 +126,12 @@ class EditorGui(QMainWindow):
         return v_layout_image_directory
 
     def _build_directory_image(self):
-        self.directory_image = ImageWidget(Defaults['default_image'], "Selected image")
+        self.directory_image = ImageWidget(self.default_image['image_path'], "Selected image")
 
         return self.directory_image
 
     def _build_current_image(self):
-        self.current_image = ImageWidget(Defaults['default_image'], "Current song cover")
+        self.current_image = ImageWidget(self.default_image['image_path'], "Current song cover")
 
         return self.current_image
 
@@ -143,6 +146,7 @@ class EditorGui(QMainWindow):
         return h_layout_image_select
 
     def _build_add_image(self):
+        # TODO: make this a drag and drop image downloader
         group_box_add_image_to_directory = QGroupBox("Add image to selected directory")
         v_layout_group_box_add_image_to_directory = QGridLayout()
 
@@ -172,10 +176,6 @@ class EditorGui(QMainWindow):
         v_layout_song_directory = QVBoxLayout()
         v_layout_song_directory.addWidget(self.song_directory_lb)
         v_layout_song_directory.addWidget(bn_select_directory)
-
-        file_name = "system0.m4a"
-        file_direc = "/Users/spencer/PycharmProjects/MusicFileEditorGui/modules/test_files"
-        self.song_path = os.path.join(file_direc, file_name)
 
         return v_layout_song_directory
 
@@ -316,6 +316,7 @@ class EditorGui(QMainWindow):
         return group_box_edit_metadata
 
     def _build_add_song(self):
+        # TODO: make this a drag and drop YouTube downloader
         group_box_add_song_to_directory = QGroupBox("Add song to selected directory")
         v_layout_group_box_add_song_to_directory = QGridLayout()
 
@@ -416,28 +417,13 @@ class EditorGui(QMainWindow):
             se.update_label(self, update_label, file_type)
 
             # update associated labels in the gui
-            for key in self.song_metadata_dictionary:
-                if key == 'cover_art':
-                    metadata_image = self.song_metadata_dictionary[key]
-                    # update song cover image
-                    se.update_image(self, "current_image", metadata_image)
-
-                else:
-                    label_name = "lb_current_" + key
-                    updated_text = self.song_metadata_dictionary[key]
-                    se.update_label(self, label_name, updated_text)
-
-                    # update line edit metadata with current metadata if metadata checkbox is checked
-                    if self.cb_edit_metadata_fill_le.checkState() is Qt.CheckState.Checked:
-                        line_edit_name = "le_metadata_" + key
-                        updated_text = self.song_metadata_dictionary[key]
-                        se.update_line_edit_text(self, line_edit_name, updated_text)
+            se.update_song_metadata_labels(self)
 
         # update image currently selected from image directory
         elif self.return_key == "current_file" and self.dictionary_arg == "image_directory":
             # check if image directory has default currently selected
-            if self.return_value == "-- Default --":
-                image_path = Defaults['default_image']
+            if self.return_value == self.default_image['image_label']:
+                image_path = self.default_image['image_path']
             else:
                 image_path = os.path.join(self.image_directory_dictionary['directory_name'],
                                           self.image_directory_dictionary[self.return_key])
@@ -445,18 +431,10 @@ class EditorGui(QMainWindow):
             se.update_image(self, "directory_image", image_path)
 
     def save_settings_action(self):
-        se.save_settings(self)
         # update metadata tags to reflect saved settings
-        # update associated labels in the gui (make sure things updated
-        for key in self.song_metadata_dictionary:
-            if key == 'cover_art':
-                metadata_image = self.song_metadata_dictionary[key]
-                se.update_image(self, "current_image", metadata_image)  # update song cover image
-
-            else:
-                label_name = "lb_current_" + key
-                updated_text = self.song_metadata_dictionary[key]
-                se.update_label(self, label_name, updated_text)
+        se.save_settings(self)
+        # update associated labels in the gui (make sure things updated)
+        se.update_song_metadata_labels(self)
 
     def add_from_url_action(self):
         self.ext_event()

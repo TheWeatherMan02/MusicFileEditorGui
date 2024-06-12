@@ -1,7 +1,5 @@
 import os
 
-Default_Image_Path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "test_files", "episode_1.jpeg")
-
 Song_Metadata = {'title': "",
                  'artist': "",
                  'album': "",
@@ -20,9 +18,14 @@ Directory_Template = {'directory_name': "",
                       'add_url': ""
                       }
 
+# TODO: make proper default image
+Default_Image = {'image_path': os.path.join(os.path.dirname(os.path.dirname(__file__)), "test_files", "episode_1.jpeg"),
+                 'image_label': "-- Default --"
+                 }
+
 # ####---------------------------------------------------------
 
 Defaults = {'song_metadata': Song_Metadata,
             'directory_template': Directory_Template,
-            'default_image': Default_Image_Path
+            'default_image': Default_Image
             }

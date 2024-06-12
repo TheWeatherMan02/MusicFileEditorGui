@@ -44,6 +44,66 @@ class GetMetadata:
 
         return self.metadata
 
+    def get_ogg_metadata(self):
+        from modules.dictionaries.metadata_keys import ogg_tags
+        from mutagen.oggvorbis import error as OggVorbisError
+
+        try:
+            for key in ogg_tags:
+                tag = ogg_tags[key]
+                if key == 'cover_art' and tag in self.audio_file:
+                    import base64
+                    import struct
+                    # make a dictionary to hold all the image data
+
+                    image_dictionary = {}
+
+                    # get and decode data
+                    encoded_picture_data = self.audio_file[tag][0]
+                    picture_data = base64.b16decode(encoded_picture_data)
+
+                    offset = 0  # parsing data using an offset to keep track of position in data
+
+                    image_dictionary['picture_type'] = struct.unpack('>I', picture_data[offset:offset+4])
+                    offset += 4
+
+                    mime_type_length = struct.unpack('>I', picture_data[offset:offset+4])
+                    offset += 4
+
+                    image_dictionary['mime_type'] = picture_data[offset:offset+mime_type_length].decode('ascii')
+                    offset += mime_type_length
+
+                    description_length, = struct.unpack('>I', picture_data[offset:offset+4])
+                    offset += 4
+
+                    image_dictionary['description'] = picture_data[offset:offset+description_length].decode('utf-8')
+                    offset += description_length
+
+                    # skipping width, height, color depth, and number of colors (4 bytes each)
+                    offset += 4 * 4
+
+                    image_data_length = struct.unpack('>I', picture_data[offset:offset+4])
+                    offset += 4
+
+                    # image data is now in raw binary form (could save by writing to file)
+                    image_dictionary['image_data'] = picture_data[offset:offset+image_data_length]
+
+                    self.metadata = image_dictionary['image_data']
+                    print(f"Found metadata for {tag}")
+
+                elif tag in self.audio_file:
+                    tag_metadata = self.audio_file[key]
+                    self.metadata.update({key: tag_metadata})
+                    print(f"Found metadata for {tag}")
+                else:
+                    self.metadata.update({key: ""})
+                    print(f"!!! (get_ogg_metadata) No value found for {key} in tags")
+
+        except OggVorbisError:
+            print("!!! (get_ogg_metadata) OggVorbisError occurred, check file type or header may be corrupted")
+        except Exception as e:
+            print(f"!!! (get_ogg_metadata) Unexpected error occurred {e}")
+
 
 class SaveMetadata:
     def __init__(self, audio_file, new_metadata, change_image, file_path, new_directory, no_header_found):
@@ -117,3 +177,53 @@ class SaveMetadata:
         except Exception as e:
             print("!!! (save_mp3_metadata) Exception occurred when saving mp3 metadata")
             print(f"Exception message: {e}")
+
+    def save_ogg_metadata(self):
+        from modules.dictionaries.metadata_keys import ogg_tags
+        from mutagen.oggvorbis import error as OggVorbisError
+
+        try:
+            for key in ogg_tags:
+                tag = ogg_tags[key]
+                if key == 'cover_art' and self.change_image is True:
+                    import base64
+                    import struct
+
+                    # getting file mime type
+                    mime_type = filetype.guess_mime(self.new_metadata['cover_art'])
+                    with open(self.new_metadata['cover_art'], "rb") as image_file:
+                        image_data = image_file.read()
+
+                    picture_data = (
+                            struct.pack('>I', 3) +  # Picture type: 3 = Front Cover
+                            struct.pack('>I', len(mime_type)) + mime_type.encode('ascii') +  # MIME type
+                            struct.pack('>I', len("")) + b"" +  # Description
+                            struct.pack('>I', 0) +  # Width (optional)
+                            struct.pack('>I', 0) +  # Height (optional)
+                            struct.pack('>I', 0) +  # Color depth (optional)
+                            struct.pack('>I', 0) +  # Number of colors (optional)
+                            struct.pack('>I', len(image_data)) + image_data  # Image data
+                    )
+
+                    picture_data_base64 = base64.b64encode(picture_data).decode('ascii')
+
+                    # add tag to ogg file
+                    self.audio_file[tag] = [picture_data_base64]
+                    print(f"!!! (save_ogg_metadata) Successfully added metadata tag for: '{key}'")
+
+                else:
+                    self.audio_file[tag] = self.new_metadata[key]
+                    print(f"!!! (save_ogg_metadata) Successfully added metadata tag for: '{key}'")
+
+            # saving changes to file
+            self.audio_file.save()
+            print("Metadata successfully changed")
+
+            if self.new_directory != "":
+                print("Moving file to new directory")
+                self.change_directory()
+
+        except OggVorbisError:
+            print("!!! (save_ogg_metadata) OggVorbisError occurred, check file type or header may be corrupted")
+        except Exception as e:
+            print(f"!!! (save_ogg_metadata) Unexpected error occurred {e}")

@@ -25,16 +25,16 @@ Audio_File_Types = ["audio/mp3",
                     "audio/x-speex"
                     ]
 
-Audio_File_Extensions = ["mp3",
-                         "mp4",
-                         "m4a",
-                         "ogg",
-                         "wav",
-                         "aac",
-                         "flac",
-                         "aiff",
-                         "wma",
-                         "opus"
+Audio_File_Extensions = [".mp3",
+                         ".mp4",
+                         ".m4a",
+                         ".ogg",
+                         ".wav",
+                         ".aac",
+                         ".flac",
+                         ".aiff",
+                         ".wma",
+                         ".opus"
                          ]
 
 Image_File_Extension = [".jpg",

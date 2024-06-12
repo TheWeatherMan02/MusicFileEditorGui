@@ -1,6 +1,7 @@
 import os.path
 
 from modules.dictionaries.file_types import Audio_File_Types
+from modules.auxiliary_functions import open_file_type
 from modules.auxiliary_functions import metadata_classes
 
 from mutagen import File
@@ -31,6 +32,7 @@ def open_file(file_path, write_to_file=False):
     "write_to_file". If this is false, the program will instead stop trying to open the file since it does not have any
     metadata in it.
 
+    :param write_to_file:
     :param file_path:
     :return:
     """
@@ -39,31 +41,18 @@ def open_file(file_path, write_to_file=False):
 
     if audio_mime_type in Audio_File_Types:
         no_header_found = None  # initializing no header found tag
-        try:
+        try:  # TODO: add more file types
             if audio_mime_type == 'audio/mp4':
                 from mutagen.mp4 import MP4
                 file_type = "mp4"
                 audio = MP4(file_path)
 
             elif audio_mime_type == 'audio/mp3':
-                from mutagen.mp3 import MP3
-                from mutagen.id3 import ID3, ID3NoHeaderError
-                file_type = "mp3"
-                while True:
-                    try:
-                        audio = MP3(file_path, ID3=ID3)
-                        break
-                    except ID3NoHeaderError:
-                        print("!!! (open_file) no ID3 header detected in file")
-                        if write_to_file is True:  # want open file anyway because we will write new metadata to it
-                            print("Creating ID3 header")
-                            audio = ID3()
-                            no_header_found = file_path  # saving file if there is no header found requires a file path
-                            break
+                audio, file_type, no_header_found = open_file_type.open_mp3_file(file_path, write_to_file)
 
-                        else:  # since file has no metadata, can exit the function
-                            print("File contains no metadata, exiting loop")
-                            return None
+            elif audio_mime_type == 'audio/vorbis':
+                audio, file_type = open_file_type.open_ogg_file(file_path)
+
             else:
                 print("!!! (open_file) File type \"{0}\" has not been integrated yet".format(audio_mime_type))
                 return None
@@ -93,7 +82,9 @@ def get_file_metadata(file_path):
         metadata_class = metadata_classes.GetMetadata(audio)
 
         file_metadata = getattr(metadata_class, "get_" + file_type + "_metadata")()
-        metadata.update(file_metadata)
+
+        if file_metadata is not None:
+            metadata.update(file_metadata)
 
     return metadata
 
@@ -106,11 +97,13 @@ def save_file_metadata(file_path, new_metadata, change_image, export_type, make_
     if export_type is not None:
         # need to export to another file type without changing the metadata in the original audio file
         file_root, _ = os.path.splitext(file_path)
-        output_file_path = file_root + os.sep + export_type
+        output_file_path = file_root + export_type
 
         # check the mime type so the file can be exported
         if audio_mime_type == 'audio/mp3':
             audio_export = AudioSegment.from_mp3(file_path)
+        elif audio_mime_type == 'audio/vorbis':
+            audio_export = AudioSegment.from_ogg(file_path)
         else:
             # this will stop the save file metadata function
             raise ValueError(f"!!! (save_file_metadata) Unsupported audio format cannot be exported: {audio_mime_type}")
@@ -167,5 +160,6 @@ def save_file_metadata(file_path, new_metadata, change_image, export_type, make_
 
 
 if __name__ == "__main__":
-    song_path = "/Users/spencer/PycharmProjects/MusicFileEditorGui/modules/test_files/01_Main_Theme.mp3"
-    # song_metadata = get_mp3_metadata(song_path)
+    song_path = "/Users/spencer/PycharmProjects/MusicFileEditorGui/modules/test_files/system0.ogg"
+    song_type = identify_file_type(song_path)
+    print(song_type)
