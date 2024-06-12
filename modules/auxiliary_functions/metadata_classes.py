@@ -178,6 +178,8 @@ class GetMetadata:
         except Exception as e:
             print(f"!!! (get_ogg_metadata) Unexpected error occurred {e}")
 
+        return self.metadata, self.new_image
+
 
 class SaveMetadata:
     def __init__(self, audio_file, new_metadata, change_image, file_path, new_directory, no_header_found):

@@ -116,25 +116,6 @@ def update_song_metadata_labels(editor, new_image=False):
                 update_line_edit_text(editor, line_edit_name, updated_text)
 
 
-def update_song_metadata_labels(editor):
-    for key in editor.song_metadata_dictionary:
-        if key == 'cover_art':
-            metadata_image = editor.song_metadata_dictionary[key]
-            # update song cover image
-            update_image(editor, "current_image", metadata_image)
-
-        else:
-            label_name = "lb_current_" + key
-            updated_text = editor.song_metadata_dictionary[key]
-            update_label(editor, label_name, updated_text)
-
-            # update line edit metadata with current metadata if metadata checkbox is checked
-            if editor.cb_edit_metadata_fill_le.checkState() is Qt.CheckState.Checked:
-                line_edit_name = "le_metadata_" + key
-                updated_text = editor.song_metadata_dictionary[key]
-                update_line_edit_text(editor, line_edit_name, updated_text)
-
-
 def update_label(editor, label_name, updated_text):
     label = getattr(editor, label_name)
     if "lb_current_" not in label_name:
