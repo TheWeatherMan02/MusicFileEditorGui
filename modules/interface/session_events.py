@@ -68,11 +68,13 @@ def update_song_metadata(editor):
     file_name = editor.song_directory_dictionary['current_file']
     file_path = os.path.join(file_directory, file_name)
 
+    new_image = False
+
     if os.path.exists(file_path):
         try:
             print(file_path)
             # get the file type and metadata
-            metadata = audio.get_file_metadata(file_path)
+            metadata, new_image = audio.get_file_metadata(file_path)
 
             # update metadata dictionary
             editor.song_metadata_dictionary.update(metadata)
@@ -87,6 +89,31 @@ def update_song_metadata(editor):
     else:
         print("!!! (update_song_metadata) File path does not exist, no changes to metadata made")
         print(f"File path: {file_path}")
+
+    return new_image
+
+
+def update_song_metadata_labels(editor, new_image=False):
+    for key in editor.song_metadata_dictionary:
+        if key == 'cover_art':
+            metadata_image = editor.song_metadata_dictionary[key]
+            if new_image is True:
+                # update song cover image
+                update_image(editor, "current_image", metadata_image)
+            elif new_image is False:
+                # set image to default
+                update_image(editor, "current_image", editor.default_image['image_path'])
+
+        else:
+            label_name = "lb_current_" + key
+            updated_text = editor.song_metadata_dictionary[key]
+            update_label(editor, label_name, updated_text)
+
+            # update line edit metadata with current metadata if metadata checkbox is checked
+            if editor.cb_edit_metadata_fill_le.checkState() is Qt.CheckState.Checked:
+                line_edit_name = "le_metadata_" + key
+                updated_text = editor.song_metadata_dictionary[key]
+                update_line_edit_text(editor, line_edit_name, updated_text)
 
 
 def update_song_metadata_labels(editor):
@@ -153,8 +180,8 @@ def update_image(editor, widget_name, new_image):
         # if pixmap is null, then update image will be cancelled
         if new_pixmap.isNull():
             print("!!! (update_image) New pixmap used to update image is null")
-            print("Current song likely does not have contain a cover image")
-            print("Setting current song cover to default image")
+            print("\tCurrent song likely does not have contain a cover image")
+            print("\tSetting current song cover to default image")
 
             new_pixmap = QPixmap(editor.default_image['image_path'])
 

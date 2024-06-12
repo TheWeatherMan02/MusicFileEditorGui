@@ -9,11 +9,13 @@ import os
 import shutil
 import filetype
 
+from modules.dictionaries.dictionaries import Default_Image
+
 
 class GetMetadata:
     def __init__(self, audio_file):
         self.audio_file = audio_file
-
+        self.new_image = False
         self.metadata = {}  # initializing metadata dictionary
 
     def get_mp3_metadata(self):
@@ -26,7 +28,12 @@ class GetMetadata:
                     if key == 'cover_art' and tag in self.audio_file:
                         cover_art = self.audio_file[tag].data
                         self.metadata.update({key: cover_art})
+                        self.new_image = True
                         print(f"Found metadata for {key}")
+                    elif key == 'cover_art' and tag not in self.audio_file:
+                        self.metadata.update({key: ""})
+                        self.new_image = False
+                        print(f"!!! (get_mp3_metadata) No value found for {key} in tags")
                     elif tag in self.audio_file:
                         tag_metadata = self.audio_file[tag].text[0]
                         self.metadata.update({key: tag_metadata})
@@ -42,7 +49,74 @@ class GetMetadata:
             print("!!! (get_mp3_metadata) Exception occurred when getting mp3 metadata")
             print(f"Exception message: {e}")
 
-        return self.metadata
+        return self.metadata, self.new_image
+
+    def get_ogg_metadata(self):
+        from modules.dictionaries.metadata_keys import ogg_tags
+        from mutagen.oggvorbis import error as OggVorbisError
+
+        try:
+            for key in ogg_tags:
+                tag = ogg_tags[key]
+                if key == 'cover_art' and tag in self.audio_file:
+                    import base64
+                    import struct
+                    # make a dictionary to hold all the image data
+
+                    image_dictionary = {}
+
+                    # get and decode data
+                    encoded_picture_data = self.audio_file[tag][0]
+                    picture_data = base64.b16decode(encoded_picture_data)
+
+                    offset = 0  # parsing data using an offset to keep track of position in data
+
+                    image_dictionary['picture_type'] = struct.unpack('>I', picture_data[offset:offset+4])
+                    offset += 4
+
+                    mime_type_length = struct.unpack('>I', picture_data[offset:offset+4])
+                    offset += 4
+
+                    image_dictionary['mime_type'] = picture_data[offset:offset+mime_type_length].decode('ascii')
+                    offset += mime_type_length
+
+                    description_length, = struct.unpack('>I', picture_data[offset:offset+4])
+                    offset += 4
+
+                    image_dictionary['description'] = picture_data[offset:offset+description_length].decode('utf-8')
+                    offset += description_length
+
+                    # skipping width, height, color depth, and number of colors (4 bytes each)
+                    offset += 4 * 4
+
+                    image_data_length = struct.unpack('>I', picture_data[offset:offset+4])
+                    offset += 4
+
+                    # image data is now in raw binary form (could save by writing to file)
+                    image_dictionary['image_data'] = picture_data[offset:offset+image_data_length]
+
+                    self.metadata = image_dictionary['image_data']
+                    self.new_image = True
+                    print(f"Found metadata for {tag}")
+
+                elif key == 'cover_art' and tag not in self.audio_file:
+                    self.metadata.update({key: ""})
+                    self.new_image = False
+                    print(f"!!! (get_mp3_metadata) No value found for {key} in tags")
+                elif tag in self.audio_file:
+                    tag_metadata = self.audio_file[key]
+                    self.metadata.update({key: tag_metadata})
+                    print(f"Found metadata for {tag}")
+                else:
+                    self.metadata.update({key: ""})
+                    print(f"!!! (get_ogg_metadata) No value found for {key} in tags")
+
+        except OggVorbisError:
+            print("!!! (get_ogg_metadata) OggVorbisError occurred, check file type or header may be corrupted")
+        except Exception as e:
+            print(f"!!! (get_ogg_metadata) Unexpected error occurred {e}")
+
+        return self.metadata, self.new_image
 
     def get_ogg_metadata(self):
         from modules.dictionaries.metadata_keys import ogg_tags

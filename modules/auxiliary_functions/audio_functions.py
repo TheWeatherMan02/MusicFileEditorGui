@@ -81,12 +81,12 @@ def get_file_metadata(file_path):
     else:
         metadata_class = metadata_classes.GetMetadata(audio)
 
-        file_metadata = getattr(metadata_class, "get_" + file_type + "_metadata")()
+        file_metadata, new_image = getattr(metadata_class, "get_" + file_type + "_metadata")()
 
         if file_metadata is not None:
             metadata.update(file_metadata)
 
-    return metadata
+    return metadata, new_image
 
 
 def save_file_metadata(file_path, new_metadata, change_image, export_type, make_copy, move_to_directory):

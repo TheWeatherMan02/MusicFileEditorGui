@@ -409,7 +409,7 @@ class EditorGui(QMainWindow):
 
         # if song is being selected, call to update metadata tags
         if self.return_key == "current_file" and self.dictionary_arg == "song_directory":
-            se.update_song_metadata(self)
+            new_image = se.update_song_metadata(self)
 
             # update file type label in export section
             update_label = "lb_file_type"
@@ -417,7 +417,7 @@ class EditorGui(QMainWindow):
             se.update_label(self, update_label, file_type)
 
             # update associated labels in the gui
-            se.update_song_metadata_labels(self)
+            se.update_song_metadata_labels(self, new_image)
 
         # update image currently selected from image directory
         elif self.return_key == "current_file" and self.dictionary_arg == "image_directory":
