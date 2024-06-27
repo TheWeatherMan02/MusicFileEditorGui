@@ -43,9 +43,7 @@ def open_file(file_path, write_to_file=False):
         no_header_found = None  # initializing no header found tag
         try:  # TODO: add more file types
             if audio_mime_type == 'audio/mp4':
-                from mutagen.mp4 import MP4
-                file_type = "mp4"
-                audio = MP4(file_path)
+                audio, file_type = open_file_type.open_mp4_file(file_path)
 
             elif audio_mime_type == 'audio/mp3':
                 audio, file_type, no_header_found = open_file_type.open_mp3_file(file_path, write_to_file)
@@ -78,6 +76,7 @@ def get_file_metadata(file_path):
     if audio is None:
         print("returning to main function without opening file in path:")
         print(f"\t{file_path}")
+        return None
     else:
         metadata_class = metadata_classes.GetMetadata(audio)
 
