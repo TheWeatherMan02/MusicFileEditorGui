@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d2c54fe6-04fc-44ac-a4a6-30cfd24a73a5" name="Changes" comment="Completed ogg integration&#10;&#10;Ammend: fixed updating image">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="d2c54fe6-04fc-44ac-a4a6-30cfd24a73a5" name="Changes" comment="Fixed broken rebase" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -44,25 +42,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.audio_functions.executor": "Run",
-    "Python.button_widget.executor": "Run",
-    "Python.dictionaries.executor": "Run",
-    "Python.editor_QWidget.executor": "Run",
-    "Python.editor_main.executor": "Run",
-    "Python.from_chatGPT.executor": "Run",
-    "Python.gptA.executor": "Run",
-    "Python.gptC.executor": "Run",
-    "Python.metadata_classes.executor": "Run",
-    "Python.session_events.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SONARLINT_PRECOMMIT_ANALYSIS": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/spencer/PycharmProjects/MusicFileEditorGui/.venv/bin",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.audio_functions.executor&quot;: &quot;Run&quot;,
+    &quot;Python.button_widget.executor&quot;: &quot;Run&quot;,
+    &quot;Python.dictionaries.executor&quot;: &quot;Run&quot;,
+    &quot;Python.editor_QWidget.executor&quot;: &quot;Run&quot;,
+    &quot;Python.editor_main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.from_chatGPT.executor&quot;: &quot;Run&quot;,
+    &quot;Python.gptA.executor&quot;: &quot;Run&quot;,
+    &quot;Python.gptC.executor&quot;: &quot;Run&quot;,
+    &quot;Python.metadata_classes.executor&quot;: &quot;Run&quot;,
+    &quot;Python.session_events.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SONARLINT_PRECOMMIT_ANALYSIS&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/spencer/PycharmProjects/MusicFileEditorGui/.venv/bin&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/.venv/bin" />
@@ -165,7 +163,15 @@
       <option name="project" value="LOCAL" />
       <updated>1718180290962</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Fixed broken rebase">
+      <option name="closed" value="true" />
+      <created>1718181199587</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1718181199587</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -175,6 +181,7 @@
     <MESSAGE value="Completed mp3 integration&#10;&#10;The music editor is now full operational for mp3 files only. Other files still need to be added and the code needs to be cleaned up.&#10;&#10;In addition to implementing other file types, still need to implement download from YouTube feature." />
     <MESSAGE value="Completed ogg integration" />
     <MESSAGE value="Completed ogg integration&#10;&#10;Ammend: fixed updating image" />
-    <option name="LAST_COMMIT_MESSAGE" value="Completed ogg integration&#10;&#10;Ammend: fixed updating image" />
+    <MESSAGE value="Fixed broken rebase" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed broken rebase" />
   </component>
 </project>

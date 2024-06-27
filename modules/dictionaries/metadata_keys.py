@@ -12,6 +12,14 @@ mp3_tags = {'title': ["TIT2"],
             'cover_art': ["APIC:"]
             }
 
+mp4_tags = {'title': "\xa9nam",
+            'artist': "\xa9ART",
+            'album': "\xa9alb",
+            'year': "\xa9day",
+            'genre': "\xa9gen",
+            'track_number': "trkn",
+            'cover_art': "covr"}
+
 ogg_tags = {'title': "TITLE",
             'artist': "ARTIST",
             'album': "ALBUM",
