@@ -8,6 +8,7 @@ The classes are stored separately from the audio functions file to reduce clutte
 import os
 import shutil
 import filetype
+# from PIL import Image
 
 from modules.dictionaries.dictionaries import Default_Image
 
@@ -195,7 +196,7 @@ class SaveMetadata:
                 print("!!! (save_mp3_metadata) Getting ready to add metadata tag: 'cover_art'")
                 # get the mime type of the image
                 mime_type = filetype.guess_mime(self.new_metadata['cover_art'])
-                with open(self.new_metadata['cover_art']) as img_file:
+                with open(self.new_metadata['cover_art'], 'rb') as img_file:
                     image_data = img_file.read()
                 apic_frame = APIC(encoding=3, mime=mime_type, type=3, desc='Cover', data=image_data)
                 self.audio_file.tags.delall('APIC')  # deletes existing image if there is one
@@ -229,10 +230,10 @@ class SaveMetadata:
                 tag = mp4_tags[key]
                 if key == 'cover_art' and self.change_image is True:
                     mime_type = filetype.guess_mime(self.new_metadata['cover_art'])
-                    with open(self.new_metadata['cover_art']) as img_file:
+                    with open(self.new_metadata['cover_art'], 'rb') as img_file:
                         image_data = img_file.read()
 
-                    if mime_type == "image/jpg":
+                    if mime_type == "image/jpg" or mime_type == "image/jpeg":
                         image = MP4Cover(image_data, imageformat=MP4Cover.FORMAT_JPEG)
                     elif mime_type == "image/png":
                         image = MP4Cover(image_data, imageformat=MP4Cover.FORMAT_PNG)
@@ -253,7 +254,7 @@ class SaveMetadata:
                 self.change_directory()
 
         except Exception as e:
-            print("!!! (save_mp3_metadata) Exception occurred when saving mp3 metadata")
+            print("!!! (save_mp4_metadata) Exception occurred when saving mp4 metadata")
             print(f"Exception message: {e}")
 
     def save_ogg_metadata(self):

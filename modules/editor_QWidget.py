@@ -199,6 +199,7 @@ class EditorGui(QMainWindow):
         """
         self.cb_edit_metadata_fill_le = CheckboxWidget("Fill edit lines with current metadata when selecting file",
                                                        self)
+        self.cb_edit_metadata_fill_le.setCheckState(Qt.CheckState.Checked)  # checkstate turned to Checked by default
         return self.cb_edit_metadata_fill_le
 
     def _build_metadata_display(self):

@@ -4,6 +4,7 @@ Project requirements:
 - 
 - filetype (pip install filetype)
 - mutagen (pip install mutagen)
+- pillow (pip install pillow)
 - pydub (pip install pydub)
 - PyQt6 (pip install PyQt6)
 

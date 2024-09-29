@@ -189,7 +189,7 @@ def save_settings(editor):
     default_check = editor.dm_image_directory_select.currentText()
     if default_check != editor.default_image['image_label']:
         # update cover art to selected image
-        image_directory = editor.image_directory_select['directory_name']
+        image_directory = editor.image_directory_dictionary['directory_name']
         image_name = editor.image_directory_dictionary['current_file']
         image_path = os.path.join(image_directory, image_name)
         new_metadata['cover_art'] = image_path
@@ -202,6 +202,9 @@ def save_settings(editor):
     export_type_check_state = editor.cb_export_file.checkState()
     if export_type_check_state is Qt.CheckState.Checked:
         export_type = editor.song_directory_dictionary['export_type']
+        # we want to make sure our export type is "mp4" instead of ".mp4"
+        if "." in export_type:
+            export_type = export_type.split(".")[-1]
     else:
         export_type = None
 

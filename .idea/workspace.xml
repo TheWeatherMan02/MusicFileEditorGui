@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d2c54fe6-04fc-44ac-a4a6-30cfd24a73a5" name="Changes" comment="Fixed broken rebase" />
+    <list default="true" id="d2c54fe6-04fc-44ac-a4a6-30cfd24a73a5" name="Changes" comment="Fixed broken rebase">
+      <change beforePath="$PROJECT_DIR$/.idea/MusicFileEditorGui.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/MusicFileEditorGui.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -19,7 +23,6 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -30,7 +33,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/TheWeatherMan02/MusicFileEditorGui.git&quot;,
-    &quot;accountId&quot;: &quot;f30b10bd-0cc5-4895-9a70-77e01fc013b5&quot;
+    &quot;accountId&quot;: &quot;039761dd-7e63-4ef1-b5df-840a67b7ce54&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
@@ -102,7 +105,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-babbdf50b680-746f403e7f0c-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-241.15989.155" />
+        <option value="bundled-python-sdk-0e3be3396995-c546a90a8094-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.23339.19" />
       </set>
     </attachedChunks>
   </component>

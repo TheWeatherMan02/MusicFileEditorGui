@@ -96,7 +96,9 @@ def save_file_metadata(file_path, new_metadata, change_image, export_type, make_
     if export_type is not None:
         # need to export to another file type without changing the metadata in the original audio file
         file_root, _ = os.path.splitext(file_path)
-        output_file_path = file_root + export_type
+
+        # if this has been formatted correctly, export type should be like "mp4" and not ".mp4"
+        output_file_path = file_root + f".{export_type}"
 
         # check the mime type so the file can be exported
         if audio_mime_type == 'audio/mp3':
